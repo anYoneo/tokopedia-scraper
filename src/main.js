@@ -26,25 +26,36 @@ function daftar(nama) {
 }
 
 (async () => {
-  // Kalau berjalan DI Apify, ambil input dari platform. Kalau tidak, dari argv.
-  let queries = null, maxItems = 100, maxScrolls = 3;
+  const diApify = !!process.env.APIFY_IS_AT_HOME;
   let ActorRef = null;
-  try {
+
+  // WAJIB: Actor.init() sebelum getInput/pushData. Tanpa ini SDK melempar
+  // "Actor.getInput() was called but the Actor instance was not initialized"
+  // dan pushData tidak menulis apa pun ke dataset.
+  if (diApify) {
     const mod = require('apify');
     ActorRef = mod.Actor;
-    if (ActorRef && process.env.APIFY_IS_AT_HOME) {
-      const input = (await ActorRef.getInput()) || {};
-      queries = Array.isArray(input.queries) ? input.queries : (input.query ? [input.query] : null);
-      if (input.maxItems) maxItems = parseInt(input.maxItems, 10);
-      if (input.maxScrolls != null) maxScrolls = parseInt(input.maxScrolls, 10);
-    }
-  } catch (_) { /* SDK tidak ada: mode CLI biasa */ }
+    await ActorRef.init();
+  }
 
-  if (!queries) {
+  // Kalau berjalan DI Apify, ambil input dari platform. Kalau tidak, dari argv.
+  let queries = null, maxItems = 100, maxScrolls = 3;
+  if (diApify) {
+    const input = (await ActorRef.getInput()) || {};
+    queries = Array.isArray(input.queries)
+      ? input.queries
+      : (input.query ? [input.query] : null);
+    if (input.maxItems) maxItems = parseInt(input.maxItems, 10);
+    if (input.maxScrolls != null) maxScrolls = parseInt(input.maxScrolls, 10);
+  }
+
+  if (!queries || !queries.length) {
     const queriesArg = daftar('queries') || (arg('query') && [arg('query')]) || null;
     queries = queriesArg || ['sepatu'];
-    maxItems = parseInt(arg('maxItems', arg('limit', maxItems)), 10);
-    maxScrolls = parseInt(arg('maxScrolls', maxScrolls), 10);
+    if (!diApify) {
+      maxItems = parseInt(arg('maxItems', arg('limit', maxItems)), 10);
+      maxScrolls = parseInt(arg('maxScrolls', maxScrolls), 10);
+    }
   }
   const out = arg('out', null);
 
@@ -55,7 +66,12 @@ function daftar(nama) {
     log: (m) => console.log('[info]', m),
   });
 
-  const hasil = { kata_kunci: queries, jumlah: rows.length, diambil_pada: new Date().toISOString(), produk: rows };
+  const hasil = {
+    kata_kunci: queries,
+    jumlah: rows.length,
+    diambil_pada: new Date().toISOString(),
+    produk: rows,
+  };
   console.log(JSON.stringify({ jumlah: rows.length, contoh: rows.slice(0, 2) }, null, 1));
 
   if (out) {
@@ -65,13 +81,22 @@ function daftar(nama) {
   }
 
   // Simpan ke dataset Apify bila berjalan di platform
-  if (ActorRef && process.env.APIFY_IS_AT_HOME) {
-    try {
+  if (diApify) {
+    if (rows.length) {
       await ActorRef.pushData(rows);
-      await ActorRef.setValue('OUTPUT', hasil);
       console.log('tersimpan ke dataset Apify:', rows.length);
-    } catch (e) {
-      console.error('gagal menyimpan ke dataset:', String(e.message).slice(0, 120));
+    } else {
+      console.warn('PERINGATAN: 0 produk — lihat log di atas untuk jalur yang gagal.');
     }
+    await ActorRef.setValue('OUTPUT', {
+      kata_kunci: queries,
+      jumlah: rows.length,
+      diambil_pada: hasil.diambil_pada,
+    });
+    await ActorRef.exit();
   }
-})();
+})().catch(async (e) => {
+  console.error('GAGAL:', String(e && e.stack || e).slice(0, 2000));
+  try { const { Actor } = require('apify'); if (process.env.APIFY_IS_AT_HOME) await Actor.fail(String(e.message)); } catch (_) {}
+  process.exit(1);
+});

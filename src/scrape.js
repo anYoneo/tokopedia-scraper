@@ -246,17 +246,32 @@ async function scrapeTokopedia(opsi) {
 
   // Beberapa cara peluncuran — Tokopedia kadang menolak HTTP/2 dari headless,
   // dan mode yang berhasil bisa berbeda antar-run (jaringan berubah).
+  //
+  // PENTING (di dalam image Apify): executable bawaan Playwright yang ada di
+  // image mungkin bukan "chromium headless shell" yang dicari versi Playwright
+  // di package.json. Karena itu tiap mode juga dicoba dengan channel 'chromium'
+  // (build chromium penuh) dan 'chrome' (Chrome yang memang ada di image), plus
+  // executablePath dari env bila disediakan.
+  const dasarArgs = ['--no-sandbox', '--disable-dev-shm-usage', '--disable-blink-features=AutomationControlled'];
   const caraPeluncuran = [
-    { args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-blink-features=AutomationControlled'] },
-    { channel: 'chrome', args: ['--no-sandbox', '--disable-blink-features=AutomationControlled'] },
-    { args: ['--no-sandbox', '--disable-http2', '--disable-blink-features=AutomationControlled'] },
+    { args: dasarArgs },
+    { args: dasarArgs, channel: 'chromium' },
+    { args: dasarArgs, channel: 'chrome' },
+    { args: dasarArgs.concat(['--disable-http2']) },
+    { args: dasarArgs.concat(['--disable-http2']), channel: 'chromium' },
+    { args: dasarArgs.concat(['--disable-http2']), channel: 'chrome' },
   ];
+  const paksaExe = process.env.BROWSER_EXECUTABLE_PATH || null;
 
   for (let idx = 0; idx < caraPeluncuran.length; idx++) {
     const cara = caraPeluncuran[idx];
     let browser;
     try {
-      browser = await chromium.launch({ headless: true, args: cara.args, channel: cara.channel });
+      const opsi = { headless: true, args: cara.args };
+      if (cara.channel) opsi.channel = cara.channel;
+      if (paksaExe) opsi.executablePath = paksaExe;
+      if (opsi.channel && paksaExe) delete opsi.channel; // executablePath menang
+      browser = await chromium.launch(opsi);
     } catch (e) {
       log(`peluncuran ${idx + 1} gagal: ${String(e.message).slice(0, 100)}`);
       continue;
@@ -309,21 +324,23 @@ async function scrapeTokopedia(opsi) {
         }
         // 2) jalur cadangan: panggil GraphQL langsung dari konteks browser
         if (dapat === 0) {
+          const sebelumCadangan = baris.length;
           try {
             const body = await panggilGQLangsung(page, q);
             tambah(ambilProduk(body));
-            log(`"${q}": ${baris.length} produk (jalur GraphQL langsung)`);
+            log(`"${q}": +${baris.length - sebelumCadangan} produk (jalur GraphQL langsung)`);
           } catch (e) {
             log(`GraphQL via halaman gagal pada "${q}": ${String(e.message).slice(0, 90)}`);
             try {
               const body2 = await panggilGQLRequest(ctx, q);
               tambah(ambilProduk(body2));
-              log(`"${q}": ${baris.length} produk (jalur APIRequestContext)`);
+              log(`"${q}": +${baris.length - sebelumCadangan} produk (jalur APIRequestContext)`);
             } catch (e2) {
               log(`APIRequestContext gagal pada "${q}": ${String(e2.message).slice(0, 90)}`);
             }
           }
-          dapat = baris.length > 0 ? 1 : 0;
+          // Akurat per kata kunci: hanya selisih dari langkah ini, bukan total.
+          dapat = baris.length - sebelumCadangan;
         } else {
           log(`"${q}": ${dapat} produk (jalur render)`);
         }

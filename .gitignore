@@ -8,3 +8,5 @@ dump-out.json
 .apify_output.json
 npm-debug.log*
 .DS_Store
+# Lock file dibuat di Windows; npm di dalam image Apify tidak bisa menimpanya (EACCES).
+package-lock.json

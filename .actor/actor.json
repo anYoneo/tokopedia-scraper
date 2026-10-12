@@ -1,14 +1,16 @@
 {
+  "$schema": "https://apify.com/schemas/v1/actor.ide.json",
   "actorSpecification": 1,
   "name": "tokopedia-scraper",
   "title": "Tokopedia Scraper — Produk, Harga, Rating & Jumlah Terjual",
-  "description": "Ambil data produk Tokopedia lengkap dengan harga, harga coret/diskon, rating, jumlah terjual, nama toko, kota toko, dan kategori. Cukup masukkan kata kunci. Hasil siap diunduh sebagai JSON, CSV, atau Excel. Cocok untuk riset harga, pemantauan kompetitor, dan kurasi katalog marketplace Indonesia terbesar.",
+  "description": "Ambil data produk Tokopedia: harga Rupiah, diskon, rating, jumlah terjual, dan profil toko. Ekspor JSON/CSV/Excel. Untuk riset harga dan pemantauan kompetitor di marketplace terbesar Indonesia. Kolom sudah bersih (harga jadi angka, '3rb+ terjual' jadi 3000).",
   "version": "1.0",
   "buildTag": "latest",
   "meta": {
     "templateId": "js-crawlee-playwright-chrome"
   },
-  "input": "./input_schema.json",
+  "inputSchema": "./input_schema.json",
+  "outputSchema": "./output_schema.json",
   "dockerfile": "./Dockerfile",
   "readme": "./README.md",
   "storages": {

@@ -54,14 +54,49 @@ peramban tanpa kepala.
 | | |
 |---|---|
 | Kode | ✅ selesai & teruji |
-| Petunjuk Actor (`actor.json`, input & dataset schema, Dockerfile) | ✅ selesai |
+| Petunjuk Actor (`actor.json`, input/dataset/output schema, Dockerfile) | ✅ selesai |
 | README listing | ✅ selesai |
-| Publikasi ke Apify Store | ⏳ **butuh 1 klik Anda** (login/otorisasi Apify) |
-| Harga | ⏳ disarankan **pay-per-result** (lihat `LISTING.md`) |
-| Pendapatan | **Rp 0** — belum ada pelanggan, karena belum terbit |
+| **Publikasi ke Apify Store** | ✅ **TERBIT** 2026-10-12 — `https://apify.com/anyoneo/tokopedia-scraper` |
+| Harga | ⏳ hanya "Pay per usage"; monetisasi belum aktif (lihat bawah) |
+| Pendapatan | **Rp 0** — belum ada pelanggan |
 
-## Langkah berikutnya (untuk saya, setelah Anda login)
+## Bukti terbit (terverifikasi via API publik, bukan klaim)
 
-1. `apify login` (token dari konsol) → `apify push` → Actor terbit
-2. Set harga pay-per-result (mis. $0.5–1 per 1.000 hasil) + batas gratis uji coba
-3. Ukur 14 hari: pemakai, run, konversi → putuskan lanjut atau hentikan
+```
+GET /v2/acts/2s1jFBrgg5VxSaHES  ->  isPublic: True
+GET https://apify.com/anyoneo/tokopedia-scraper  ->  HTTP 200
+ikat: title "Tokopedia Scraper — Produk, Harga, Rating & Jumlah Terjual · Apify"
+Kategori store: "Research markets & competitors"
+```
+
+Build terbit `1.0.6` dijalankan ulang di cloud: **30 produk, kelengkapan ~100%**
+(harga, rating, terjual, toko, kota, diskon 100%; kategori 96%).
+
+## Rintangan yang sudah dilewati saat publikasi (jangan diulang)
+
+1. **`Actor.init()` wajib** — tanpa itu `getInput()` gagal dan `pushData()` tidak
+   menulis apa pun, padahal log tetap bilang "tersimpan". Gejala: run SUCCEEDED
+   tapi dataset `itemCount: 0`.
+2. **`package-lock.json` dilarang ikut** — npm di dalam image tidak bisa menimpanya
+   (`EACCES /home/myuser`) → build gagal exit 243.
+3. **Versi Playwright harus cocok** dengan Chromium di image Apify → tiap mode
+   peluncuran dicoba juga dengan `channel: chromium` / `chrome`.
+4. **`actor.json` wajib pakai kunci `inputSchema`** (bukan `input`) dan
+   **`outputSchema`** — tanpa `outputSchema`, tombol Publish diblokir dengan pesan
+   `Add "Output" schema(s) to the source code and rebuild`.
+5. **Profil Apify wajib publik + README profil wajib diganti** — README default
+   (template 591 karakter) membuat form profil menolak submit secara diam-diam;
+   `isProfilePublic` tetap `false`. Setelah README diisi, submit langsung jalan.
+6. **Klik di konsol Apify butuh urutan benar:** `scrollIntoView` → tunggu ~3 detik
+   sampai scroll berhenti → `elementFromPoint` untuk cek elemen teratas benar →
+   `click_at_xy` dengan koordinat itu. `element.click()` via JS tidak didaftarkan
+   React; tombol sering ditutupi modal bantuan (tutup dengan Cancel dulu).
+
+## Langkah berikutnya
+
+1. Aktifkan monetisasi (**satu langkah manual di konsol Apify**; tidak ada API-nya):
+   `https://console.apify.com/actors/2s1jFBrgg5VxSaHES/publication/monetize`
+   → set **pay-per-result** (mis. $0,50–1 per 1.000 hasil) + kuota uji coba gratis.
+   Catatan: perubahan monetisasi butuh **14 hari** untuk berlaku.
+2. Catat baseline hari-0 dan ukur 14 hari: pemakai, run, konversi → lanjut atau hentikan.
+3. Tuliskan README Actor yang lebih menjual (contoh output nyata, kasus pakai).

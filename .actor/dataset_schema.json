@@ -1,29 +1,33 @@
 {
+  "$schema": "https://apify.com/schemas/v1/dataset.ide.json",
   "actorSpecification": 1,
   "fields": {
-    "id": "String",
-    "nama": "String",
-    "harga": "Integer",
-    "harga_teks": "String",
-    "harga_asli": "Integer",
-    "diskon_pct": "Integer",
-    "rating": "Number",
-    "terjual": "Integer",
-    "toko_id": "String",
-    "toko_nama": "String",
-    "toko_kota": "String",
-    "toko_tier": "Integer",
-    "toko_url": "String",
-    "kategori": "String",
-    "kategori_jalur": "String",
-    "iklan": "Boolean",
-    "url": "String",
-    "gambar": "String",
-    "diambil_pada": "String"
+    "type": "object",
+    "properties": {
+      "id": { "type": ["string", "null"], "description": "ID produk di Tokopedia" },
+      "nama": { "type": ["string", "null"], "description": "Nama produk" },
+      "harga": { "type": ["integer", "null"], "description": "Harga dalam Rupiah" },
+      "harga_teks": { "type": ["string", "null"], "description": "Harga seperti tertulis di situs" },
+      "harga_asli": { "type": ["integer", "null"], "description": "Harga sebelum diskon" },
+      "diskon_pct": { "type": ["integer", "null"], "description": "Persentase diskon" },
+      "rating": { "type": ["number", "null"], "description": "Rating rata-rata 1-5" },
+      "terjual": { "type": ["integer", "null"], "description": "Jumlah unit terjual" },
+      "toko_id": { "type": ["string", "null"] },
+      "toko_nama": { "type": ["string", "null"] },
+      "toko_kota": { "type": ["string", "null"] },
+      "toko_tier": { "type": ["integer", "null"] },
+      "toko_url": { "type": ["string", "null"] },
+      "kategori": { "type": ["string", "null"] },
+      "kategori_jalur": { "type": ["string", "null"] },
+      "iklan": { "type": ["boolean", "null"] },
+      "url": { "type": ["string", "null"] },
+      "gambar": { "type": ["string", "null"] },
+      "diambil_pada": { "type": ["string", "null"] }
+    }
   },
   "views": {
     "overview": {
-      "title": "Ringkasan produk",
+      "title": "Produk Tokopedia",
       "transformation": {
         "fields": [
           "nama",
@@ -40,16 +44,15 @@
       "display": {
         "component": "table",
         "properties": {
-          "columns": [
-            { "label": "Produk", "field": "nama" },
-            { "label": "Harga (Rp)", "field": "harga" },
-            { "label": "Diskon %", "field": "diskon_pct" },
-            { "label": "Rating", "field": "rating" },
-            { "label": "Terjual", "field": "terjual" },
-            { "label": "Toko", "field": "toko_nama" },
-            { "label": "Kota", "field": "toko_kota" },
-            { "label": "Kategori", "field": "kategori" }
-          ]
+          "nama": { "label": "Produk", "format": "text" },
+          "harga": { "label": "Harga (Rp)", "format": "number" },
+          "diskon_pct": { "label": "Diskon %", "format": "number" },
+          "rating": { "label": "Rating", "format": "number" },
+          "terjual": { "label": "Terjual", "format": "number" },
+          "toko_nama": { "label": "Toko", "format": "text" },
+          "toko_kota": { "label": "Kota", "format": "text" },
+          "kategori": { "label": "Kategori", "format": "text" },
+          "url": { "label": "Tautan", "format": "link" }
         }
       }
     }
