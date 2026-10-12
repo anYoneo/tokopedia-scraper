@@ -1,0 +1,22 @@
+{
+  "name": "tokopedia-scraper",
+  "version": "1.0.0",
+  "description": "Ambil data produk Tokopedia (harga, rating, jumlah terjual, toko, kategori) langsung dari GraphQL internal situsnya.",
+  "type": "commonjs",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "local": "node src/main.js --queries sepatu --maxItems 40 --out hasil.csv"
+  },
+  "keywords": [
+    "tokopedia",
+    "scraper",
+    "ecommerce",
+    "indonesia"
+  ],
+  "dependencies": {
+    "apify": "^3.7.2",
+    "playwright": "^1.64.0"
+  },
+  "license": "MIT"
+}

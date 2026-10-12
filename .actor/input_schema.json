@@ -1,0 +1,38 @@
+{
+  "title": "Input Tokopedia Scraper",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "queries": {
+      "title": "Kata kunci pencarian",
+      "type": "array",
+      "description": "Daftar kata kunci produk yang ingin diambil. Contoh: [\"sepatu\", \"kopi arabika\"]. Boleh juga URL kategori Tokopedia.",
+      "editor": "stringList",
+      "prefill": [
+        "sepatu"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "maxItems": {
+      "title": "Maksimum produk",
+      "type": "integer",
+      "description": "Batas total produk yang diambil pada satu kali jalan. Semakin besar, semakin lama.",
+      "default": 100,
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "maxScrolls": {
+      "title": "Berapa kali gulir per kata kunci",
+      "type": "integer",
+      "description": "Jumlah pengguliran halaman untuk memicu pemuatan produk tambahan.",
+      "default": 3,
+      "minimum": 0,
+      "maximum": 50
+    }
+  },
+  "required": [
+    "queries"
+  ]
+}

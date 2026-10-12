@@ -1,0 +1,10 @@
+node_modules/
+storage/
+hasil*.csv
+hasil*.json
+data-uji.*
+raw-dump.json
+dump-out.json
+.apify_output.json
+npm-debug.log*
+.DS_Store

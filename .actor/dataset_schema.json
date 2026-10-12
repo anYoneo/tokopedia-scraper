@@ -1,0 +1,57 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "id": "String",
+    "nama": "String",
+    "harga": "Integer",
+    "harga_teks": "String",
+    "harga_asli": "Integer",
+    "diskon_pct": "Integer",
+    "rating": "Number",
+    "terjual": "Integer",
+    "toko_id": "String",
+    "toko_nama": "String",
+    "toko_kota": "String",
+    "toko_tier": "Integer",
+    "toko_url": "String",
+    "kategori": "String",
+    "kategori_jalur": "String",
+    "iklan": "Boolean",
+    "url": "String",
+    "gambar": "String",
+    "diambil_pada": "String"
+  },
+  "views": {
+    "overview": {
+      "title": "Ringkasan produk",
+      "transformation": {
+        "fields": [
+          "nama",
+          "harga",
+          "diskon_pct",
+          "rating",
+          "terjual",
+          "toko_nama",
+          "toko_kota",
+          "kategori",
+          "url"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "columns": [
+            { "label": "Produk", "field": "nama" },
+            { "label": "Harga (Rp)", "field": "harga" },
+            { "label": "Diskon %", "field": "diskon_pct" },
+            { "label": "Rating", "field": "rating" },
+            { "label": "Terjual", "field": "terjual" },
+            { "label": "Toko", "field": "toko_nama" },
+            { "label": "Kota", "field": "toko_kota" },
+            { "label": "Kategori", "field": "kategori" }
+          ]
+        }
+      }
+    }
+  }
+}

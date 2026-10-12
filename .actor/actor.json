@@ -1,0 +1,23 @@
+{
+  "actorSpecification": 1,
+  "name": "tokopedia-scraper",
+  "title": "Tokopedia Scraper — Produk, Harga, Rating & Jumlah Terjual",
+  "description": "Ambil data produk Tokopedia lengkap dengan harga, harga coret/diskon, rating, jumlah terjual, nama toko, kota toko, dan kategori. Cukup masukkan kata kunci. Hasil siap diunduh sebagai JSON, CSV, atau Excel. Cocok untuk riset harga, pemantauan kompetitor, dan kurasi katalog marketplace Indonesia terbesar.",
+  "version": "1.0",
+  "buildTag": "latest",
+  "meta": {
+    "templateId": "js-crawlee-playwright-chrome"
+  },
+  "input": "./input_schema.json",
+  "dockerfile": "./Dockerfile",
+  "readme": "./README.md",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "categories": [
+    "ECOMMERCE",
+    "BUSINESS"
+  ],
+  "seoTitle": "Tokopedia Scraper API — Harga, Rating & Terjual",
+  "seoDescription": "Ambil produk Tokopedia dengan harga dalam Rupiah, diskon, rating, jumlah terjual, toko dan kategori. Ekspor JSON/CSV/Excel lewat API."
+}
