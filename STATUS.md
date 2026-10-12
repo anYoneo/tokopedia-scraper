@@ -57,7 +57,7 @@ peramban tanpa kepala.
 | Petunjuk Actor (`actor.json`, input/dataset/output schema, Dockerfile) | ✅ selesai |
 | README listing | ✅ selesai |
 | **Publikasi ke Apify Store** | ✅ **TERBIT** 2026-10-12 — `https://apify.com/anyoneo/tokopedia-scraper` |
-| **Monetisasi** | ✅ **AKTIF** 2026-10-12 — Pay per event, berlaku **2026-10-26** |
+| **Monetisasi** | ✅ **AKTIF** 2026-10-12 — Pay per event, **harga sudah tampil live di halaman store** |
 | Pendapatan | **Rp 0** — belum ada pelanggan |
 
 ### Harga yang dipasang (2026-10-12)
@@ -70,7 +70,10 @@ peramban tanpa kepala.
 
 Sesuai patokan pasar yang diukur dari store ($0,80–1,50/1.000). Apify sendiri
 memperkirakan biaya compute kita **≈$0,37 per 1.000 hasil** → margin kotor ≈ **$0,53/1.000**.
-Perubahan diterapkan **2026-10-26** dan hanya bisa diubah **sekali per bulan**.
+Form menyebut perubahan berlaku **2026-10-26** (masa pemberitahuan 14 hari), tetapi
+**harga langsung tampil** di halaman store pada 2026-10-12:
+`"Pricing from $0.90 / 1,000 results"` + `pricingModel: PAY_PER_EVENT` di JSON halaman.
+Harga hanya bisa diubah **sekali per bulan**.
 
 ## Bukti terbit (terverifikasi via API publik, bukan klaim)
 
