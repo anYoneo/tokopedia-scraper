@@ -57,8 +57,20 @@ peramban tanpa kepala.
 | Petunjuk Actor (`actor.json`, input/dataset/output schema, Dockerfile) | ✅ selesai |
 | README listing | ✅ selesai |
 | **Publikasi ke Apify Store** | ✅ **TERBIT** 2026-10-12 — `https://apify.com/anyoneo/tokopedia-scraper` |
-| Harga | ⏳ hanya "Pay per usage"; monetisasi belum aktif (lihat bawah) |
+| **Monetisasi** | ✅ **AKTIF** 2026-10-12 — Pay per event, berlaku **2026-10-26** |
 | Pendapatan | **Rp 0** — belum ada pelanggan |
+
+### Harga yang dipasang (2026-10-12)
+
+| Event | Harga | Catatan |
+|---|---|---|
+| `apify-default-dataset-item` (Result) | **$0,90 / 1.000 hasil** | event utama |
+| `apify-actor-start` (Actor Start) | $0,00005 | "Infrequent" |
+| **Platform usage** | **Included / Free** | kita menanggung compute |
+
+Sesuai patokan pasar yang diukur dari store ($0,80–1,50/1.000). Apify sendiri
+memperkirakan biaya compute kita **≈$0,37 per 1.000 hasil** → margin kotor ≈ **$0,53/1.000**.
+Perubahan diterapkan **2026-10-26** dan hanya bisa diubah **sekali per bulan**.
 
 ## Bukti terbit (terverifikasi via API publik, bukan klaim)
 
@@ -94,9 +106,24 @@ Build terbit `1.0.6` dijalankan ulang di cloud: **30 produk, kelengkapan ~100%**
 
 ## Langkah berikutnya
 
-1. Aktifkan monetisasi (**satu langkah manual di konsol Apify**; tidak ada API-nya):
-   `https://console.apify.com/actors/2s1jFBrgg5VxSaHES/publication/monetize`
-   → set **pay-per-result** (mis. $0,50–1 per 1.000 hasil) + kuota uji coba gratis.
-   Catatan: perubahan monetisasi butuh **14 hari** untuk berlaku.
-2. Catat baseline hari-0 dan ukur 14 hari: pemakai, run, konversi → lanjut atau hentikan.
+1. ~~Aktifkan monetisasi~~ ✅ **SELESAI 2026-10-12** — Pay per event, $0,90/1.000 hasil,
+   platform usage kita yang tanggung. Berlaku **2026-10-26**; bisa diubah lagi **2026-11-26**.
+2. **Baseline hari-0 (2026-10-12):** total run 3, pemakai store 0, pendapatan **$0,00**.
+   Ukur pada **2026-10-26+**: pemakai, run, konversi → lanjut atau hentikan.
 3. Tuliskan README Actor yang lebih menjual (contoh output nyata, kasus pakai).
+
+### Bagaimana monetisasi akhirnya tersimpan (agar tidak diulang)
+
+Kartu `[data-test="monetization-section"]` **tidak ikut ter-render** sampai dibuka, dan
+`element.click()` maupun `click_at_xy` tidak didaftarkan React. Yang bekerja: kirim
+**rangkaian event pointer lengkap** ke elemen target —
+`pointerdown` → `mousedown` → `pointerup` → `mouseup` → `click`, semua dengan
+`{bubbles:true, cancelable:true, composed:true, view:window, button:0}`.
+
+Alur form (4 langkah): **Actor pricing** (isi `[data-test="actor-charge-event-1-price"]`
+= `0.0009`) → **Primary event** (`result`, sudah default) → **Reasoning** (textarea
+`name=reasonForChange` wajib diisi — pakai `cdp('Input.insertText')` setelah klik nyata,
+`element.value=` tidak memicu React) → **Review** → **Confirm**.
+
+Validasi yang sempat menghalangi: baris event ke-3 kosong → "Event key is required".
+Hapus kartu event kosong (tombol ikon ke-3 di dalam kartu), harga tetap bertahan.
